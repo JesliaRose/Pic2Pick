@@ -1,5 +1,5 @@
-import React from "react";
-import ProductSearch from "./components/ProductSearch";
+import React from 'react';
+import ProductSearch from './components/ProductSearch';
 
 const App = () => {
   return (

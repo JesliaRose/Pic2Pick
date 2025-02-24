@@ -1,66 +1,138 @@
 from flask import Flask, request, jsonify
-from flask_cors import CORS
 import os
 import requests
 from bs4 import BeautifulSoup
-from dotenv import load_dotenv
-
-# Load environment variables
-load_dotenv()
+from flask_cors import CORS
 
 app = Flask(__name__)
 CORS(app)
 
-UPLOAD_FOLDER = os.path.join(os.getcwd(), "static", "uploads")
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-
-SERPAPI_KEY = os.getenv("SERPAPI_KEY")
-IMGUR_CLIENT_ID = os.getenv("IMGUR_CLIENT_ID")
+# Configurations
+UPLOAD_FOLDER = "static/uploads"
+SERPAPI_KEY = "c35d90adf979c4384952b611ea040be9648b1a1eb67111880aec2798cb9ff126"  # Replace with your SerpApi key
+IMGUR_CLIENT_ID = "d561e5634adf419"  # Replace with your Imgur Client ID
+app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36"
 }
 
-@app.route("/api/search", methods=["POST"])
-def search():
-    data = request.json
-    search_query = data.get("product_name", "")
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-    flipkart_data = get_flipkart_data(search_query)
-    amazon_data = get_amazon_data(search_query)
+# Limit detected text to 5 words max
+def limit_words(text, max_words=10):
+    words = text.split()
+    return ' '.join(words[:max_words])
+
+# Upload image to Imgur
+def upload_to_imgur(image_path):
+    headers = {"Authorization": f"Client-ID {IMGUR_CLIENT_ID}"}
+    with open(image_path, "rb") as img:
+        response = requests.post(
+            "https://api.imgur.com/3/upload",
+            headers=headers,
+            files={"image": img}
+        )
+    if response.status_code == 200:
+        return response.json()["data"]["link"]
+    else:
+        print("Imgur Upload Error:", response.text)
+        return None
+
+# Get Flipkart product URL
+def get_product_url(search_query):
+    base_url = "https://www.flipkart.com/search"
+    params = {"q": search_query}
+    response = requests.get(base_url, headers=HEADERS, params=params)
+    if response.status_code == 200:
+        soup = BeautifulSoup(response.text, "html.parser")
+        product_link = soup.find("a", class_=["CGtC98", "WKTcLC", "VJA3rP"])
+        if product_link:
+            return "https://www.flipkart.com" + product_link["href"]
+    return None
+
+# Scrape product details from Flipkart
+def scrape_product_details(product_url):
+    response = requests.get(product_url, headers=HEADERS)
+    if response.status_code == 200:
+        soup = BeautifulSoup(response.text, "html.parser")
+        title_tag = soup.find("span", class_="VU-ZEz")
+        title = title_tag.text.strip() if title_tag else "Title not found"
+
+        price_tag = soup.find("div", class_="Nx9bqj")
+        price = price_tag.text.strip() if price_tag else "Price not found"
+
+        return title, price
+    return None, None
+
+# Get Amazon product price and link
+def get_amazon_price(product_name):
+    search_url = f"https://www.amazon.in/s?k={product_name.replace(' ', '+')}"
+    response = requests.get(search_url, headers=HEADERS)
+    if response.status_code == 200:
+        soup = BeautifulSoup(response.text, "html.parser")
+        products = soup.find_all("div", {"data-component-type": "s-search-result"})
+        for item in products:
+            sponsored_tag = item.find("span", string="Sponsored")
+            if sponsored_tag:
+                continue
+            price_tag = item.find("span", class_="a-price-whole")
+            if price_tag:
+                price = price_tag.text.strip()
+            else:
+                continue
+            link_tag = item.find("a", class_="a-link-normal s-no-outline")
+            product_link = "https://www.amazon.in" + link_tag["href"] if link_tag else "No link found"
+            return price, product_link
+    return None, None
+
+@app.route("/search", methods=["POST"])
+def search():
+    data = request.form
+    search_query = data.get("product_name", "").strip()
+    detected_text = None
+
+    if "image" in request.files:
+        image = request.files["image"]
+        if image.filename != "":
+            image_path = os.path.join(app.config["UPLOAD_FOLDER"], image.filename)
+            image.save(image_path)
+
+            imgur_url = upload_to_imgur(image_path)
+            if imgur_url:
+                params = {
+                    "api_key": SERPAPI_KEY,
+                    "engine": "google_lens",
+                    "url": imgur_url
+                }
+                response = requests.get("https://serpapi.com/search.json", params=params)
+                if response.status_code == 200:
+                    data = response.json()
+                    if "visual_matches" in data and len(data["visual_matches"]) > 0:
+                        detected_text = data["visual_matches"][0].get("title", "Text not found")
+                        detected_text = limit_words(detected_text)
+                        search_query = detected_text
+
+    # Flipkart data
+    flipkart_url = get_product_url(search_query) if search_query else None
+    flipkart_title, flipkart_price = scrape_product_details(flipkart_url) if flipkart_url else ("Product not found", None)
+
+    # Amazon data
+    amazon_price, amazon_link = get_amazon_price(search_query) if search_query else (None, None)
 
     return jsonify({
-        "flipkart": flipkart_data,
-        "amazon": amazon_data
+        "search_query": search_query,
+        "detected_text": detected_text,
+        "flipkart": {
+            "title": flipkart_title,
+            "price": flipkart_price,
+            "url": flipkart_url
+        },
+        "amazon": {
+            "price": amazon_price,
+            "url": amazon_link
+        }
     })
 
-def get_flipkart_data(query):
-    url = f"https://www.flipkart.com/search?q={query}"
-    response = requests.get(url, headers=HEADERS)
-    soup = BeautifulSoup(response.text, "html.parser")
-    product = soup.find("a", class_=["CGtC98", "WKTcLC", "VJA3rP"])
-    if product:
-        title = product.text.strip()
-        link = "https://www.flipkart.com" + product["href"]
-        price_tag = product.find_next("div", class_="Nx9bqj")
-        price = price_tag.text.strip() if price_tag else "Price not found"
-        return {"title": title, "price": price, "url": link}
-    return {"title": "Not found", "price": "N/A", "url": ""}
-
-def get_amazon_data(query):
-    url = f"https://www.amazon.in/s?k={query.replace(' ', '+')}"
-    response = requests.get(url, headers=HEADERS)
-    soup = BeautifulSoup(response.text, "html.parser")
-    product = soup.find("div", {"data-component-type": "s-search-result"})
-    if product:
-        title_tag = product.find("span", class_="a-size-medium")
-        title = title_tag.text.strip() if title_tag else "Not found"
-        price_tag = product.find("span", class_="a-price-whole")
-        price = price_tag.text.strip() if price_tag else "Price not found"
-        link_tag = product.find("a", class_="a-link-normal s-no-outline")
-        link = "https://www.amazon.in" + link_tag["href"] if link_tag else ""
-        return {"title": title, "price": price, "url": link}
-    return {"title": "Not found", "price": "N/A", "url": ""}
-
 if __name__ == "__main__":
-    app.run(debug=True, port=5000)
+    app.run(debug=True)
