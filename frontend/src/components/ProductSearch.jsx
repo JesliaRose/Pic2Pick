@@ -64,7 +64,6 @@ const ProductSearch = () => {
 
           <div className="result">
             <h3>Flipkart</h3>
-            <p>Title: {results.flipkart.title}</p>
             <p>Price: {results.flipkart.price}</p>
             <a href={results.flipkart.url} target="_blank" rel="noopener noreferrer">
               View on Flipkart

@@ -1,40 +1,37 @@
-import "./Results.css"
+import React from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 
-const Results = ({ productData }) => {
-  if (!productData) return <div>Loading...</div>;
+const Results = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { data } = location.state || {};
 
-  const {
-    search_query,
-    flipkart_title,
-    flipkart_price,
-    flipkart_url,
-    amazon_price,
-    amazon_link,
-  } = productData;
+  if (!data) {
+    return <p>No data found. Please go back and search for a product.</p>;
+  }
 
   return (
-    <div className="results">
-      <header className="logo">Pic<span>2</span>Pick</header>
-      <div className="product-card">
-        <h2>{search_query}</h2>
-        <p>✅ Good Product</p>
-        <div className="price-container">
-          <div className="price-box amazon">
-            <h3>Amazon</h3>
-            <p>₹ {amazon_price || "Not Found"}</p>
-            <a href={amazon_link} target="_blank" rel="noopener noreferrer">
-              Buy on Amazon
-            </a>
-          </div>
-          <div className="price-box flipkart">
-            <h3>Flipkart</h3>
-            <p>₹ {flipkart_price || "Not Found"}</p>
-            <a href={flipkart_url} target="_blank" rel="noopener noreferrer">
-              Buy on Flipkart
-            </a>
-          </div>
-        </div>
+    <div className="container">
+      <h1>Price Comparison</h1>
+      <h2>Results for: {data.product_name}</h2>
+
+      <div className="result">
+        <h3>Amazon</h3>
+        <p>Price: {data.amazon_price}</p>
+        <a href={data.amazon_link} target="_blank" rel="noopener noreferrer">
+          Buy on Amazon
+        </a>
       </div>
+
+      <div className="result">
+        <h3>Flipkart</h3>
+        <p>Price: {data.flipkart_price}</p>
+        <a href={data.flipkart_link} target="_blank" rel="noopener noreferrer">
+          Buy on Flipkart
+        </a>
+      </div>
+
+      <button onClick={() => navigate('/')}>Back to Search</button>
     </div>
   );
 };
