@@ -26,6 +26,11 @@ function HomePage() {
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
+      const validTypes = ["image/png", "image/jpeg", "image/jpg"];
+      if (!validTypes.includes(file.type)) {
+        alert("Please upload a valid PNG or JPEG file.");
+        return;
+      }
       console.log("Uploaded file:", file);
       navigate("/product", { state: { image: file } });
     }

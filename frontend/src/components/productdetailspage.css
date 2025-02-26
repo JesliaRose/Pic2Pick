@@ -1,0 +1,105 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins&display=swap");
+
+.product-details-page {
+  width: 100%;
+}
+
+.logo-image {
+  padding: 40px 0 20px 40px;
+}
+
+.product-image-details {
+  display: flex;
+  gap: 50px;
+  padding: 20px 40px 20px 40px;
+  margin-top: 20px;
+  margin-left: 200px;
+  margin-right: 200px;
+  width: 69%;
+  height: 200px;
+  background-color: #f1faee;
+  font-family: "Poppins", serif;
+  border-radius: 20px;
+}
+
+.product-text{
+    padding: 10px 10px 0 20px;
+}
+
+.product-text h2 {
+  font-family: "Poppins", serif;
+  color: #1d3557;
+  font-size: 36px;
+  font-weight: 600;
+}
+
+.product-text p {
+    font-family: "Poppins", serif;
+    color: #1d3557;
+    font-size: 24px;
+    font-weight: 600;
+  }
+
+.product-text span{
+    margin-right: 10px;
+}  
+
+.product-prices {
+  margin-left: 200px;
+  margin-right: 200px;
+  margin-top: 40px;
+  display: flex;
+  gap: 40px;
+  justify-content: space-between;
+  width: 74.5%;
+}
+
+.product-amazon,
+.product-flipkart {
+  width: 50%;
+  height: 220px;
+  border-radius: 20px;
+  background-color: #f1faee;
+}
+
+.product-amazon img,
+.product-flipkart img {
+  margin-left: -10px;
+  margin-top: -20px;
+  height: 34px;
+}
+
+.product-amazon p,
+.product-flipkart p {
+  font-family: "Poppins", serif;
+  color: #1d3557;
+  font-size: 48px;
+  font-weight: 600;
+  margin-top: -20px;
+  margin-bottom: 36px;
+  text-align: center;
+}
+
+.product-buy-button {
+  background-color: #457b9d;
+  color: #f1faee;
+  font-family: "Poppins", serif;
+  text-align: center;
+  letter-spacing: 1.4px;
+  font-weight: 600;
+  font-size: 18px;
+  padding: 8px 25px;
+  border-radius: 14px;
+  width: 84.5%;
+  cursor: pointer;
+  display: inline-block;
+  transition: background-color 0.3s;
+  outline: none;
+  border: 0;
+  margin-left: 40px;
+  margin-top: -50px;
+}
+
+.product-buy-button:hover {
+  background-color: #2b4c60;
+}

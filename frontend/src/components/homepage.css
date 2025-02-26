@@ -11,19 +11,22 @@ body {
 
 .logo-container {
   flex: 1;
-  padding: 30px 30px 0 0;
+  padding: 0 30px 0 0;
   display: flex;
   align-items: center;
   justify-content: left;
+  margin-top: -40px;
+  margin-bottom: -40px;
 }
 
 .logo-container img {
   height: 140px;
+  margin-left: -50px;
 }
 
 .left-content {
   flex: 1;
-  padding: 160px 40px 40px 100px;
+  padding: 150px 40px 40px 140px;
   display: flex;
   flex-direction: column;
 }
@@ -36,16 +39,11 @@ body {
 }
 
 .right-image img {
-  height: 714px;
-}
-
-.logo-container {
-  margin-bottom: -40px;
+  height: 660px;
 }
 
 .main-content {
   max-width: 500px;
-  margin: 0;
   flex-grow: 1;
   display: flex;
   flex-direction: column;
@@ -58,13 +56,12 @@ body {
   letter-spacing: 1.4px;
   line-height: 36px;
   color: #f1faee;
-  margin: 20px 0 40px;
+  margin: 0px 0 40px;
 }
 
 .upload-content {
   display: flex;
   gap: 10px;
-  margin-bottom: 6px;
 }
 
 .upload-section {
@@ -84,6 +81,7 @@ body {
   cursor: pointer;
   display: inline-block;
   transition: background-color 0.3s;
+  margin-bottom: 20px;
 }
 
 .upload-button:hover {
@@ -107,7 +105,6 @@ body {
 }
 
 .search-container {
-  margin-top: 20px;
   width: 100%;
   max-width: 500px;
 }
