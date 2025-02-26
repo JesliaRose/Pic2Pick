@@ -13,7 +13,7 @@ function HomePage() {
 
   const handleSearch = () => {
     if (searchQuery.trim()) {
-      navigate("/product");
+      navigate("/product", { state: { searchQuery: searchQuery.trim() } });
     }
   };
 
