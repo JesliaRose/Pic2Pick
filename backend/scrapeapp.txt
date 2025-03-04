@@ -57,16 +57,8 @@ def scrape_product_details(product_url):
         price_tag = soup.find("div", class_="Nx9bqj")
         price = price_tag.text.strip() if price_tag else "Price not found"
 
-        reviews = []
-        review_containers = soup.find_all('div', class_=['col EPCmJX', 'col EPCmJX MDcJkH']) 
-        for container in review_containers:
-
-            comment_element = container.find(['div', 'p'], class_=['z9E0IG', '_11pzQk'])
-            comment = comment_element.get_text(strip=True) if comment_element else "No comment"
-            reviews.append(comment)
-
-        return title, price, reviews
-    return "Product not found", None, []
+        return title, price
+    return None, None
 
 def get_amazon_price(product_name):
     search_url = f"https://www.amazon.in/s?k={product_name.replace(' ', '+')}"
@@ -115,16 +107,9 @@ def search():
                         detected_text = limit_words(detected_text)
                         search_query = detected_text
 
-    flipkart_url = get_product_url(search_query) if search_query else None
-    flipkart_title, flipkart_price, flipkart_reviews = scrape_product_details(flipkart_url) if flipkart_url else ("Product not found", None, [])
 
-    # Print Flipkart reviews to console
-    print("\nFlipkart Reviews:")
-    if flipkart_reviews:
-        for idx, review in enumerate(flipkart_reviews, 1):
-            print(review)
-    else:
-        print("No reviews found.")
+    flipkart_url = get_product_url(search_query) if search_query else None
+    flipkart_title, flipkart_price = scrape_product_details(flipkart_url) if flipkart_url else ("Product not found", None)
 
     amazon_price, amazon_link = get_amazon_price(search_query) if search_query else (None, None)
 
@@ -134,8 +119,7 @@ def search():
         "flipkart": {
             "title": flipkart_title,
             "price": flipkart_price,
-            "url": flipkart_url,
-            "reviews": flipkart_reviews
+            "url": flipkart_url
         },
         "amazon": {
             "price": amazon_price,

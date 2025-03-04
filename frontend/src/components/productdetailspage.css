@@ -113,14 +113,13 @@
   position: absolute;
   top: 50%;
   left: 50%;
-  -webkit-transform: translateY(-50%) translateX(-50%);
+  transform: translateY(-50%) translateX(-50%);
   
   > div {
     height: 100%;
     width: 20px;
     border-radius: 20px;
     display: inline-block;
-    float: left;
     margin-left: 10px;
     -webkit-animation: delay 1.0s infinite ease-in-out;
     animation: delay 1.0s infinite ease-in-out;
