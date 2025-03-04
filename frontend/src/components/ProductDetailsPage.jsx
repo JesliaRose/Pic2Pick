@@ -52,7 +52,17 @@ function ProductDetailsPage() {
     fetchProductData();
   }, [uploadedImage, searchQuery]);
 
-  if (loading) return (<div className="loading-div"><div className="spinner"></div>Loading...</div>);
+  if (loading)
+    return (
+      <div className="loader">
+        <div className="bar1"></div>
+        <div className="bar2"></div>
+        <div className="bar3"></div>
+        <div className="bar4"></div>
+        <div className="bar5"></div>
+        <div className="bar6"></div>
+      </div>
+    );
   if (error) return <div className="loading-div">Error: {error}</div>;
 
   return (
@@ -79,9 +89,7 @@ function ProductDetailsPage() {
           <h2>
             {productData?.flipkart?.title ||
               productData?.search_query ||
-              "Product Name".split(" ")
-              .slice(0, 12)
-              .join(" ")}
+              "Product Name".split(" ").slice(0, 12).join(" ")}
           </h2>
           <p>
             <span>
