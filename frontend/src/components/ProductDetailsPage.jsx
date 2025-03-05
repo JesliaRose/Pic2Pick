@@ -5,7 +5,11 @@ import amazonlogo from "../images/amazonlogo.png";
 import flipkartlogo from "../images/flipkartlogo.png";
 import "./productdetailspage.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faThumbsUp } from "@fortawesome/free-solid-svg-icons";
+import {
+  faThumbsUp,
+  faThumbsDown,
+  faMeh,
+} from "@fortawesome/free-solid-svg-icons";
 
 function ProductDetailsPage() {
   const location = useLocation();
@@ -87,19 +91,33 @@ function ProductDetailsPage() {
         )}
         <div className="product-text">
           <h2>
-            {productData?.flipkart?.title ||
+            {(productData?.flipkart?.title ||
               productData?.search_query ||
-              "Product Name".split(" ").slice(0, 12).join(" ")}
+              "Product Name").split(" ").slice(0, 12).join(" ")}
           </h2>
           <p>
             <span>
               <FontAwesomeIcon
-                icon={faThumbsUp}
+                icon={
+                  productData?.sentiment_analysis?.overall === "Good Product"
+                    ? faThumbsUp
+                    : productData?.sentiment_analysis?.overall === "Bad Product"
+                    ? faThumbsDown
+                    : faMeh
+                }
                 size="xl"
-                style={{ color: "#24ad1a" }}
+                style={{
+                  color:
+                    productData?.sentiment_analysis?.overall === "Good Product"
+                      ? "#24ad1a"
+                      : productData?.sentiment_analysis?.overall ===
+                        "Bad Product"
+                      ? "#ff0000"
+                      : "#ffa500",
+                }}
               />
             </span>{" "}
-            Good Product
+            {productData?.sentiment_analysis?.overall}
           </p>
         </div>
       </div>
