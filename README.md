@@ -2,7 +2,7 @@
 Pic2Pick is an AI-powered product comparison tool that lets users upload an image of any product and instantly view the product’s price and details from Amazon and Flipkart, along with an intelligent review analysis.
 It combines the power of image recognition, web scraping, and sentiment analysis to deliver a seamless product search experience.
 
-Features
+## Features
 - Image-based product search using Google Lens via SerpApi
 - Price comparison from Amazon and Flipkart using real-time web scraping
 - Review sentiment analysis to show if people love or hate the product
@@ -10,7 +10,7 @@ Features
 - Seamless image upload via Imgur
 - Fast backend powered by Flask
 
-How It Works
+## How It Works
 1. User uploads a product image.
 2. The backend uses SerpApi (Google Lens) to extract the product name.
 3. Product name is used to scrape data from Flipkart and Amazon.
@@ -21,4 +21,17 @@ How It Works
    - Product URL
    - Review summary with sentiment score
 
-Screenshots:
+## Screenshots:
+### Homepage - Image Search
+![Homepage Image](frontend/src/assets/pic2pick_homepage_imagesearch.png)
+
+### Result - Image Search
+![Search Result Image](frontend/src/assets/pic2pick_result_textsearch.png)
+
+### Homepage - Text Search
+![Homepage Text](frontend/src/assets/pic2pick_homepage_textsearch.png)
+
+### Result - Text Search
+![Search Result Text](frontend/src/assets/pic2pick_result_imagesearch.png)
+
+
