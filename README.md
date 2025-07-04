@@ -23,7 +23,7 @@ It combines the power of image recognition, web scraping, and sentiment analysis
 
 ## Screenshots:
 ### Homepage - Image Search
-![Homepage Image](frontend/src/assets/pic2pick_homepage_imageserach.png)
+![Homepage Image](frontend/src/assets/pick2pick_homepage_imageserach.png)
 
 ### Result - Image Search
 ![Search Result Image](frontend/src/assets/pic2pick_result_imagesearch.png)
